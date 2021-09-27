@@ -1,5 +1,7 @@
 package helpers
 
+import java.math.BigInteger
+
 import com.typesafe.config.{Config, ConfigFactory}
 import org.ergoplatform.ErgoAddressEncoder
 import org.ergoplatform.appkit.{Address, ErgoClient, NetworkType, RestApiErgoClient}
@@ -39,4 +41,13 @@ object Configs extends ConfigHelper {
   lazy val addressEncoder = new ErgoAddressEncoder(node.networkType.networkPrefix)
 
   val idleAddress: Address = Address.create("9fUpyNAvdaCaXLGLgufVdcL7KRGUQgmtu31QxexHmxL1GyHixXd")
+  object token{
+    lazy val locking: String = readKey("token.locking")
+    lazy val staking: String = readKey("token.staking")
+    lazy val distribution: String = readKey("token.distribution")
+    lazy val configNFT: String = readKey("token.configNFT")
+  }
+
+  lazy val address1: Address = Address.create(readKey("address1.address"))
+  lazy val secret1: BigInteger = BigInt(readKey("address1.secret"), 16).bigInteger
 }
