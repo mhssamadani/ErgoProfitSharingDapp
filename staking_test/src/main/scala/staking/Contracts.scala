@@ -52,6 +52,8 @@ object Contracts {
         .item("distributionToken", ErgoId.create(Configs.token.distribution).getBytes)
         .item("lockingToken", ErgoId.create(Configs.token.locking).getBytes)
         .item("stakingToken", ErgoId.create(Configs.token.staking).getBytes)
+        .item("distributionHash", Utils.getContractScriptHash(distribution))
+        .item("ticketHash", Utils.getContractScriptHash(ticket))
         .build(), Scripts.configScript)
       val address = Utils.getContractAddress(contract)
       println(s"config address is : \t\t\t$address")
