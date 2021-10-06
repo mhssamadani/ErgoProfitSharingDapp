@@ -37,6 +37,7 @@ object Configs extends ConfigHelper {
   lazy val explorer: String = if (explorerUrlConf.isEmpty) RestApiErgoClient.getDefaultExplorerUrl(node.networkType) else explorerUrlConf
   lazy val fee: Long = readKey("fee.default", "1000000").toLong
   lazy val maxFee: Long = readKey("fee.max", "1000000").toLong
+  lazy val minBoxValue: Long = readKey("box.min").toLong
   val ergoClient: ErgoClient = RestApiErgoClient.create(node.url, node.networkType, node.apiKey, explorer)
   lazy val addressEncoder = new ErgoAddressEncoder(node.networkType.networkPrefix)
 

@@ -12,11 +12,12 @@ object Boxes {
     var incomeInputBoxes: Vector[InputBox] = Vector()
     Configs.ergoClient.execute(ctx => {
       val txB = ctx.newTxBuilder()
+      val tokenId = Utils.randomId()
       for (i <- 0 until 10) {
         val box = txB.outBoxBuilder()
-          .value((Utils.randDouble * 10 * 1e9).toLong)
+          .value((10 * 1e9).toLong)
           .contract(Contracts.income)
-        if (withToken) box.tokens(new ErgoToken(Utils.randomId(), Utils.randLong(100, 200)))
+        if (withToken) box.tokens(new ErgoToken(tokenId, Utils.randLong(10, 20)))
         incomeInputBoxes = incomeInputBoxes :+ box.build().convertToInputWith(Utils.randomId(), 0)
       }
       incomeInputBoxes
@@ -31,39 +32,39 @@ object Boxes {
     box.build()
   }
 
-  def getTicket(txB: UnsignedTransactionBuilder, value: Long, stake: Long, address: ErgoAddress, checkpoint: Long,
-                initialCheckpoint: Long, reservedTokenId: ErgoId): OutBox ={
+  def getTicket(txB: UnsignedTransactionBuilder, value: Long, stake: Long, address: ErgoAddress,  r4: Array[Long]
+                , reservedTokenId: ErgoId): OutBox ={
     txB.outBoxBuilder()
       .value(value)
       .contract(Contracts.ticket)
       .tokens(new ErgoToken(Configs.token.locking, 1), new ErgoToken(Configs.token.staking, stake))
-      .registers(Utils.longListToErgoValue(Array(initialCheckpoint, checkpoint)),
+      .registers(Utils.longListToErgoValue(r4),
         ErgoValue.of(new ErgoTreeContract(address.script).getErgoTree.bytes),
         ErgoValue.of(reservedTokenId.getBytes))
       .build()
   }
 
-  def getConfig(lockingCount: Long, distCount: Long, r4: Array[Long]): OutBox ={
+  def getConfig(distCount: Long, lockingCount: Long, r4: Array[Long]): OutBox ={
     Configs.ergoClient.execute(ctx => {
       val txB = ctx.newTxBuilder()
       txB.outBoxBuilder()
         .value(1e9.toLong)
         .contract(Contracts.config)
         .tokens(new ErgoToken(Configs.token.configNFT, 1),
-          new ErgoToken(Configs.token.locking, lockingCount),
-          new ErgoToken(Configs.token.distribution, distCount))
+          new ErgoToken(Configs.token.distribution, distCount),
+          new ErgoToken(Configs.token.locking, lockingCount))
         .registers(Utils.longListToErgoValue(r4))
         .build()
     })
   }
 
-  def getDistribution(txB: UnsignedTransactionBuilder, value: Long, checkpoint: Long, fee: Long,
+  def getDistribution(txB: UnsignedTransactionBuilder, value: Long, checkpoint: Long, fee: Long, ticketCount: Long,
                       ergShare: Long, tokenShare: Long = 0, tokenCount: Long = 0, tokenId: String = ""): OutBox ={
     var box = txB.outBoxBuilder()
       .value(value)
       .contract(Contracts.distribution)
-      .registers(Utils.longListToErgoValue(Array(checkpoint, ergShare, tokenShare, fee)))
-    if(tokenShare== 0) box = box.tokens(new ErgoToken(Configs.token.distribution, 1))
+      .registers(Utils.longListToErgoValue(Array(checkpoint, ergShare, tokenShare, fee)), ErgoValue.of(ticketCount))
+    if(tokenCount== 0) box = box.tokens(new ErgoToken(Configs.token.distribution, 1))
     else box = box.tokens(new ErgoToken(Configs.token.distribution, 1),
       new ErgoToken(tokenId, tokenCount))
     box.build()
