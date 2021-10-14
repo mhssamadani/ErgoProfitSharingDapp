@@ -17,7 +17,7 @@ Our solution consists of some components that we briefly describe here, and then
 ### Config Box
 The Config box stores three values the **number of active tokens in the next epoch**, the **income checkpoint**, and the **income threshold**. Config Box is responsible for ticket creation and burning so it can track the active tokens. It uses one of the *locker Tokens* here to create a Ticket. The created Ticket can receive the income from the next checkpoint. The checkpoint is actually a number that increases each time an income distribution happens. We will discuss the distribution later.
 <p align="center">
-![](Images/LockingTx.png)
+    <img src=Images/LockingTx.png>
 </p>
 
 System income can be distributed if it hits the threshold. Since the distribution process imposes fees, we don't want that threshold to be that small. However, on the other side, we want to split the system income as soon as possible. Thus we should choose a reasonable threshold here. Then we chose this scenario for the income threshold:
@@ -30,7 +30,7 @@ As the system asset can be Erg or different token types, the threshold can be se
 ### Distribution Contract
 The Distribution Contract is responsible for distributing the system income between the stakeholders. It stores the **income checkpoint** and **staking portion** and receives the income along with the distribution setting in the funding transaction. This contract is distinguishable by its distribution token received from the config box. The Config Box checkpoint is incremented by one in this transaction, but other settings are protected.
 <p align="center">
-![Funding](Images/FundingTx.png)
+    <img src=Images/FundingTx.png>
 </p>
 
 The received income consists of Erg and a token type (The Distribution Contract can distribute only one token type rather than the Erg). The number of the Ergs and tokens is dividable by the current active tokens of the system. We describe the distribution transaction later.
@@ -56,12 +56,12 @@ The contract is designed such a way that it can be spent in two situations:
     - the checkpoint is equal to the Distribution Contract checkpoint, and it is incremented afterward.
 
 <p align="center">
-![](Images/DistributionTx.png)
+    <img src = Images/DistributionTx.png>
 </p>
 
 2. **Token unlocking**, the stakeholder can transfer his asset to anyone else. In order to transfer the tokens, he needs to unlock them by spending the Ticket along with the Config Box. The Config Box takes back the Locker Token in this step and updates the number of active tokens. As the Config Box is the bottleneck of this system, to avoid the DoS attacks by users, each user can only unlock its tokens when it receives at least one reward round (It’s a setting and can be customized based on the usage situation).
 <p align="center">
-![](Images/UnlockingTx.png)
+    <img src = Images/UnlockingTx.png>
 </p>
 
 ### Income Contract
@@ -70,7 +70,7 @@ All service incomes are going to a special contract named *Income*. Since the se
 
 1. **Merge Transaction**: Incomes can be merged in this transaction. A batch of income boxes is merged to create a bigger box with all spending boxes assets. The batch size has minimum and maximum constraints to minimize the fees imposed by this transaction.
 <p align="center">
-![](Images/MergeTx.png)
+    <img src = Images/MergeTx.png>
 </p>
 
 2. **Funding Transaction**: As we saw earlier, system income is used as the fund of the distribution creation. This contract specifically makes sure that the excessive amount comes back to the same contract. Anyway, the funding transaction can also be funded in any other ways rather than the income contract.
