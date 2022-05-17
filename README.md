@@ -1,3 +1,4 @@
+Please refer to https://github.com/profit-sharing for the working dapp.
 # Ergo Profit-Sharing DApp
 This repository contains the proposed solution for the profit-sharing problem that can be used as a service for other available dApps. You can find the scripts and testing scenarios [here](./src/main/scala/staking/Scripts.scala). In the following, we explain our proposed solution, its components, and the usage scenarios.
 
